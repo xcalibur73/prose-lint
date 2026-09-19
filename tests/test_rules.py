@@ -1,6 +1,9 @@
 """Unit tests for the deslop RuleEngine."""
 
+import os
+import sys
 import unittest
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from prose_lint.rules import RuleEngine
 
 
@@ -79,6 +82,20 @@ class TestRuleEngine(unittest.TestCase):
         self.assertEqual(len(punct), 2)
         self.assertEqual(punct[0].line_number, 1)
         self.assertEqual(punct[1].line_number, 2)
+
+    def test_detects_skipped_heading_hierarchy(self):
+        text = "# Main Title\n\n### Subtitle with skipped H2\n\nParagraph text."
+        findings = self.engine.scan(text)
+        hierarchy = [f for f in findings if f.category == "hierarchy"]
+        self.assertEqual(len(hierarchy), 1)
+        self.assertIn("jumps from H1 directly to H3", hierarchy[0].message)
+
+    def test_detects_multiple_h1_headings(self):
+        text = "# Primary Document Title\n\nIntroduction.\n\n# Secondary Document Title\n\nBody content."
+        findings = self.engine.scan(text)
+        h1_findings = [f for f in findings if f.category == "hierarchy" and "Multiple H1" in f.message]
+        self.assertEqual(len(h1_findings), 1)
+        self.assertEqual(h1_findings[0].line_number, 5)
 
 
 if __name__ == "__main__":

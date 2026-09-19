@@ -4,6 +4,10 @@
 
 ProseLint is a fast, zero-external-API editorial compiler and quality gate designed for modern technical writing, search engine optimization, and generative engine optimization (GEO). Instead of functioning as an unconstrained generative wrapper, ProseLint acts as a deterministic linter that audits drafts against lexical AI markers, enforces natural sentence burstiness, optimizes passage chunks for LLM citations, compiles clean WordPress Gutenberg block comments, and transpiles pillar articles into multi-channel distribution formats.
 
+Part of the [WebAudits.pro](https://webaudits.pro) technical intelligence platform.
+
+![Terminal Verification](assets/terminal_preview.png)
+
 ---
 
 ## Key Capabilities

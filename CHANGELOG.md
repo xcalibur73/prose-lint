@@ -5,6 +5,22 @@ All notable changes to the ProseLint project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-09-20
+ 
+### Added
+- W3C WCAG 2.2 Technique H42/H69 alignment for document title outline integrity:
+  - Detected duplicate `H1` headings in `rules.py` with line attribution to prevent topic dilution.
+  - Updated `normalize_headings()` in `gutenberg.py` to automatically demote secondary `H1` headings into `H2`.
+
+## [1.1.0] - 2026-09-20
+
+### Added
+- Semantic heading hierarchy validation in `rules.py` inspired by `jina-ai/reader`:
+  - Detection of skipped heading depths (e.g. H1 directly jumping to H3) violating WCAG accessibility and search outline integrity.
+- Automated heading normalization engine in `gutenberg.py`:
+  - `normalize_headings()` function smoothing out heading level gaps while preserving title contents.
+  - `--normalize-headings` CLI flag to optionally smooth heading hierarchy during Gutenberg transpilation or text repair.
+
 ## [1.0.0] - 2026-09-19
 
 ### Added

@@ -137,12 +137,52 @@ class RuleEngine:
             for phrase in self.CONCLUSIONS
         ]
 
+    HEADING_RE = re.compile(r"^(#{1,6})\s+(.+)$")
+
     def scan(self, text: str) -> List[Finding]:
         """Scans the text and returns a list of deterministic findings."""
         findings: List[Finding] = []
         lines = text.splitlines()
+        last_heading_level = 0
+        h1_count = 0
+        in_code_fence = False
 
         for idx, line in enumerate(lines, start=1):
+            if line.startswith("```"):
+                in_code_fence = not in_code_fence
+                continue
+
+            # 0. Heading hierarchy check (WCAG 2.2 / Google Search Central outline integrity)
+            if not in_code_fence:
+                heading_match = self.HEADING_RE.match(line)
+                if heading_match:
+                    level = len(heading_match.group(1))
+                    if level == 1:
+                        h1_count += 1
+                        if h1_count > 1:
+                            findings.append(
+                                Finding(
+                                    category="hierarchy",
+                                    severity="warning",
+                                    message="Multiple H1 headings detected. Documents should have exactly one H1 to preserve single-topic outline hierarchy.",
+                                    line_number=idx,
+                                    snippet=line.strip()[:100],
+                                    suggestion="Demote secondary H1 to H2.",
+                                )
+                            )
+                    if last_heading_level > 0 and level > last_heading_level + 1:
+                        findings.append(
+                            Finding(
+                                category="hierarchy",
+                                severity="warning",
+                                message=f"Skipped heading level detected: jumps from H{last_heading_level} directly to H{level}.",
+                                line_number=idx,
+                                snippet=line.strip()[:100],
+                                suggestion=f"Adjust heading depth to H{last_heading_level + 1} to maintain strict WCAG accessibility and search hierarchy.",
+                            )
+                        )
+                    last_heading_level = level
+
             # 1. Punctuation invariant check
             for char, (label, fix) in self.FORBIDDEN_CHARACTERS.items():
                 if char in line:

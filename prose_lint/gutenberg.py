@@ -5,12 +5,54 @@ from __future__ import annotations
 import re
 
 
-def markdown_to_gutenberg(markdown_text: str) -> str:
+def normalize_headings(markdown_text: str) -> str:
+    """Normalizes skipped heading levels and demotes multiple H1s to guarantee strict document hierarchy."""
+    lines = markdown_text.splitlines()
+    normalized_lines: list[str] = []
+    last_level = 0
+    h1_seen = False
+    in_code_block = False
+
+    for line in lines:
+        if line.startswith("```"):
+            in_code_block = not in_code_block
+            normalized_lines.append(line)
+            continue
+
+        if not in_code_block:
+            heading_match = re.match(r"^(#{1,6})\s+(.+)$", line)
+            if heading_match:
+                raw_level = len(heading_match.group(1))
+                title = heading_match.group(2)
+                # Demote secondary H1 tags to H2
+                if raw_level == 1:
+                    if h1_seen:
+                        raw_level = 2
+                    else:
+                        h1_seen = True
+
+                if last_level > 0 and raw_level > last_level + 1:
+                    new_level = last_level + 1
+                else:
+                    new_level = raw_level
+                last_level = new_level
+                normalized_lines.append(f"{'#' * new_level} {title}")
+                continue
+
+        normalized_lines.append(line)
+
+    return "\n".join(normalized_lines)
+
+
+def markdown_to_gutenberg(markdown_text: str, normalize_heading_hierarchy: bool = False) -> str:
     """Converts clean Markdown into validated Gutenberg block comments.
     
     Adheres strictly to Gutenberg delimiter specifications and neutralizes
     WordPress KSES entity rewrite pitfalls.
     """
+    if normalize_heading_hierarchy:
+        markdown_text = normalize_headings(markdown_text)
+
     lines = markdown_text.splitlines()
     blocks: list[str] = []
     i = 0

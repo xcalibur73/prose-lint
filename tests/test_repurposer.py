@@ -1,6 +1,9 @@
 """Unit tests for the multi-channel ContentRepurposer."""
 
+import os
+import sys
 import unittest
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from prose_lint.repurposer import ContentRepurposer
 
 

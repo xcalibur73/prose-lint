@@ -11,7 +11,7 @@ from rich.console import Console
 from . import __version__
 from .analyzer import ProseAnalyzer
 from .geo_scorer import GEOScorer
-from .gutenberg import markdown_to_gutenberg
+from .gutenberg import markdown_to_gutenberg, normalize_headings
 from .repurposer import ContentRepurposer
 from .report_generator import ReportGenerator
 from .rules import RuleEngine
@@ -58,6 +58,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--fix",
         action="store_true",
         help="Automatically apply deterministic fixes (replace em-dashes, clean bold-first bullets).",
+    )
+    parser.add_argument(
+        "--normalize-headings",
+        action="store_true",
+        help="Automatically normalize skipped heading levels (e.g. H1 to H3 -> H2) during processing.",
     )
     parser.add_argument(
         "--save",
@@ -107,6 +112,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.fix:
         content = apply_fixes(content)
+        if args.normalize_headings:
+            content = normalize_headings(content)
         if args.save:
             Path(args.save).write_text(content, encoding="utf-8")
             Console().print(f"[bold green]Success:[/bold green] Applied deterministic fixes and saved to {args.save}")
@@ -116,7 +123,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # Output format: Gutenberg transpilation
     if args.output == "gutenberg":
-        gutenberg_markup = markdown_to_gutenberg(content)
+        gutenberg_markup = markdown_to_gutenberg(content, normalize_heading_hierarchy=args.normalize_headings)
         if args.save:
             Path(args.save).write_text(gutenberg_markup, encoding="utf-8")
             Console().print(f"[bold green]Success:[/bold green] Saved Gutenberg block markup to {args.save}")

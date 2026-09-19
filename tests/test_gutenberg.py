@@ -1,6 +1,9 @@
 """Unit tests for Gutenberg block comment transpiler and KSES entity protection."""
 
+import os
+import sys
 import unittest
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from prose_lint.gutenberg import markdown_to_gutenberg
 
 
@@ -50,6 +53,22 @@ class TestGutenberg(unittest.TestCase):
         self.assertNotIn("&&", out)  # Must neutralize raw && to protect against &#038;&#038;
         self.assertIn("/* and */", out)
         self.assertIn("<!-- /wp:code -->", out)
+
+    def test_heading_normalization(self):
+        from prose_lint.gutenberg import normalize_headings
+        md = "# Top Level\n\n#### Deeply Nested Gap"
+        normalized = normalize_headings(md)
+        self.assertEqual(normalized, "# Top Level\n\n## Deeply Nested Gap")
+
+        # Test multiple H1 normalization
+        md_multi_h1 = "# Main Heading\n\n# Second Main Heading"
+        normalized_multi = normalize_headings(md_multi_h1)
+        self.assertEqual(normalized_multi, "# Main Heading\n\n## Second Main Heading")
+
+        # Test within markdown_to_gutenberg
+        out = markdown_to_gutenberg(md, normalize_heading_hierarchy=True)
+        self.assertIn('<!-- wp:heading {"level":2} -->', out)
+        self.assertIn('<h2 class="wp-block-heading">Deeply Nested Gap</h2>', out)
 
 
 if __name__ == "__main__":
