@@ -1,5 +1,9 @@
 # ProseLint
 
+> [!NOTE]
+> **Public Architecture & Distribution Notice**: This repository provides the open-source CLI interface, demonstration fixtures, and automated test suite. Full-scale headless browser automation, real-time CDP continuous profiling, and automated white-label client PDF reporting are exclusively hosted on the [WebAudits.pro](https://www.webaudits.pro) cloud platform.
+
+
 > Deterministic Editorial Compiler, Deslop Quality Gate, and Multi-Channel Content Transpiler.
 
 ProseLint is a fast, zero-external-API editorial compiler and quality gate designed for modern technical writing, search engine optimization, and generative engine optimization (GEO). Instead of functioning as an unconstrained generative wrapper, ProseLint acts as a deterministic linter that audits drafts against lexical AI markers, enforces natural sentence burstiness, optimizes passage chunks for LLM citations, compiles clean WordPress Gutenberg block comments, and transpiles pillar articles into multi-channel distribution formats.
