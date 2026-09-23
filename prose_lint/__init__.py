@@ -10,7 +10,7 @@ from .gutenberg import markdown_to_gutenberg, normalize_headings
 from .repurposer import ContentRepurposer, RepurposedBundle
 from .rules import RuleEngine, Finding
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 __all__ = [
     "ProseAnalyzer",
     "ProseMetrics",

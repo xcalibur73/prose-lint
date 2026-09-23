@@ -119,6 +119,7 @@ class RuleEngine:
     ]
 
     BOLD_FIRST_BULLET_RE = re.compile(r"^\s*[-*]\s+\*\*([^*]+)\*\*[:\s]")
+    STANDARD_LEAD_LABELS_RE = re.compile(r"^(?:note|warning|caution|important|tip|step\s*\d+|example|prerequisite)\b", re.IGNORECASE)
     RHETORICAL_QUESTION_RE = re.compile(r"\b(why\?|what does this mean\?|the result\?|how\?)\s+[A-Z]", re.IGNORECASE)
     BINARY_CONTRAST_RE = re.compile(r"\bnot\s+([a-z\s]+)\.\s+it(?:'s|\s+is)\s+([a-z\s]+)\.", re.IGNORECASE)
 
@@ -200,16 +201,18 @@ class RuleEngine:
             # 2. Bold-first bullet structure check
             bold_bullet_match = self.BOLD_FIRST_BULLET_RE.match(line)
             if bold_bullet_match:
-                findings.append(
-                    Finding(
-                        category="structure",
-                        severity="warning",
-                        message="Formulaic bold-first bullet pattern detected. Write natural, varied paragraphs.",
-                        line_number=idx,
-                        snippet=line.strip()[:100],
-                        suggestion="Remove the bold leading prefix and integrate the concept into readable prose.",
+                label = bold_bullet_match.group(1).strip().rstrip(":")
+                if not self.STANDARD_LEAD_LABELS_RE.match(label):
+                    findings.append(
+                        Finding(
+                            category="structure",
+                            severity="warning",
+                            message="Formulaic bold-first bullet pattern detected. Write natural, varied paragraphs.",
+                            line_number=idx,
+                            snippet=line.strip()[:100],
+                            suggestion="Remove the bold leading prefix and integrate the concept into readable prose.",
+                        )
                     )
-                )
 
             # 3. Signposted conclusions
             for phrase, pattern in self._conclusion_patterns:

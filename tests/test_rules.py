@@ -97,6 +97,17 @@ class TestRuleEngine(unittest.TestCase):
         self.assertEqual(len(h1_findings), 1)
         self.assertEqual(h1_findings[0].line_number, 5)
 
+    def test_standard_lead_labels_false_positive_suppression(self):
+        text = (
+            "- **Note:** Ensure port 443 is open on the ingress controller.\n"
+            "- **Warning:** Do not commit database credentials to git.\n"
+            "- **Step 1:** Download the configuration manifest.\n"
+            "- **Tip:** Leverage Redis caching for frequent queries."
+        )
+        findings = self.engine.scan(text)
+        structure_warnings = [f for f in findings if f.category == "structure"]
+        self.assertEqual(len(structure_warnings), 0)
+
 
 if __name__ == "__main__":
     unittest.main()
