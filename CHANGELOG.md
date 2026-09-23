@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed false positive in bold-first bullet detection: exempted standard technical documentation lead labels and steps (`Note:`, `Warning:`, `Caution:`, `Important:`, `Tip:`, `Step \d+:`, `Example:`, `Prerequisite:`).
 
+### Added
+- Linked documentation and quickstart instructions to the interactive web tool on [webaudits.pro/tools/prose-lint](https://webaudits.pro/tools/prose-lint).
+
 ## [1.2.0] - 2026-09-20
  
 ### Added

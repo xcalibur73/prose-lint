@@ -10,6 +10,8 @@ ProseLint is a fast, zero-external-API editorial compiler and quality gate desig
 
 Part of the [WebAudits.pro](https://webaudits.pro) technical intelligence platform.
 
+> **Interactive Web Tool**: Run live AI deslop, cadence burstiness, and GEO citability audits directly in your browser at [webaudits.pro/tools/prose-lint](https://webaudits.pro/tools/prose-lint).
+
 ![Terminal Verification](assets/terminal_preview.png)
 
 ---
